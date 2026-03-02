@@ -1,0 +1,1918 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>問答小學堂 🎓</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #FF6B6B;
+    --secondary: #FFE66D;
+    --accent: #4ECDC4;
+    --dark: #1A1A2E;
+    --card: #16213E;
+    --text: #EAEAEA;
+    --success: #6BCB77;
+    --error: #FF4D4D;
+    --purple: #A855F7;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--dark);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse at 20% 20%, rgba(255,107,107,0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(78,205,196,0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(168,85,247,0.1) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* === SCREENS === */
+  .screen { display: none; animation: fadeSlideIn 0.5s ease; }
+  .screen.active { display: block; }
+
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* === HEADER === */
+  .game-header {
+    text-align: center;
+    padding: 40px 20px 20px;
+  }
+
+  .game-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+    filter: drop-shadow(0 0 30px rgba(255,107,107,0.4));
+  }
+
+  .game-subtitle {
+    font-size: 1.1rem;
+    color: rgba(234,234,234,0.7);
+    margin-top: 8px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .trophy-emoji {
+    font-size: 3rem;
+    display: block;
+    animation: bounce 2s infinite;
+    margin-bottom: 10px;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+  }
+
+  /* === CARDS === */
+  .card {
+    background: rgba(22, 33, 62, 0.8);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 24px;
+    padding: 32px;
+    margin: 20px 0;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+
+  /* === BUTTONS === */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 32px;
+    border: none;
+    border-radius: 50px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.15);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .btn:hover::before { opacity: 1; }
+  .btn:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+  .btn:active { transform: scale(0.97); }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--primary), #ff8e53);
+    color: white;
+    box-shadow: 0 4px 20px rgba(255,107,107,0.4);
+  }
+
+  .btn-accent {
+    background: linear-gradient(135deg, var(--accent), #3b9e97);
+    color: white;
+    box-shadow: 0 4px 20px rgba(78,205,196,0.4);
+  }
+
+  .btn-purple {
+    background: linear-gradient(135deg, var(--purple), #7c3aed);
+    color: white;
+    box-shadow: 0 4px 20px rgba(168,85,247,0.4);
+  }
+
+  .btn-yellow {
+    background: linear-gradient(135deg, var(--secondary), #ffd000);
+    color: var(--dark);
+    box-shadow: 0 4px 20px rgba(255,230,109,0.4);
+  }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--text);
+    border: 2px solid rgba(255,255,255,0.3);
+  }
+
+  .btn-lg { padding: 18px 48px; font-size: 1.2rem; }
+  .btn-sm { padding: 8px 20px; font-size: 0.85rem; }
+  .btn-block { width: 100%; display: flex; }
+
+  /* === FORM === */
+  .form-group { margin-bottom: 20px; }
+
+  .form-label {
+    display: block;
+    font-weight: 800;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent);
+  }
+
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    padding: 14px 18px;
+    background: rgba(255,255,255,0.07);
+    border: 2px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s;
+    outline: none;
+  }
+
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    border-color: var(--accent);
+    background: rgba(78,205,196,0.08);
+    box-shadow: 0 0 0 4px rgba(78,205,196,0.15);
+  }
+
+  .form-select option { background: var(--card); color: var(--text); }
+  .form-textarea { resize: vertical; min-height: 80px; }
+
+  /* === HOME SCREEN === */
+  .quiz-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .info-badge {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .info-badge .badge-icon { font-size: 2rem; }
+  .info-badge .badge-value { font-size: 1.6rem; font-weight: 900; color: var(--secondary); margin: 4px 0; }
+  .info-badge .badge-label { font-size: 0.8rem; color: rgba(234,234,234,0.6); font-weight: 700; }
+
+  .rules-list {
+    list-style: none;
+    margin: 16px 0;
+  }
+
+  .rules-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 0.95rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    line-height: 1.5;
+  }
+
+  .rules-list li::before {
+    content: '✦';
+    color: var(--accent);
+    font-size: 0.7rem;
+    margin-top: 4px;
+    flex-shrink: 0;
+  }
+
+  /* === REGISTRATION === */
+  .step-indicator {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+
+  .step {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 0.9rem;
+    border: 2px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.4);
+    transition: all 0.4s;
+  }
+
+  .step.active {
+    background: linear-gradient(135deg, var(--primary), #ff8e53);
+    border-color: var(--primary);
+    color: white;
+    box-shadow: 0 0 20px rgba(255,107,107,0.5);
+  }
+
+  .step.done {
+    background: var(--success);
+    border-color: var(--success);
+    color: white;
+  }
+
+  .step-line {
+    flex: 1; height: 2px;
+    background: rgba(255,255,255,0.1);
+    align-self: center;
+    max-width: 60px;
+    transition: background 0.4s;
+  }
+
+  .step-line.done { background: var(--success); }
+
+  /* === QUIZ SCREEN === */
+  .quiz-progress-bar {
+    height: 8px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+
+  .quiz-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 10px;
+    transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 0 12px rgba(78,205,196,0.6);
+  }
+
+  .quiz-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+
+  .question-counter {
+    background: rgba(255,255,255,0.08);
+    padding: 6px 16px;
+    border-radius: 20px;
+    color: var(--accent);
+  }
+
+  .question-type-badge {
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .badge-tf { background: rgba(255,107,107,0.2); color: var(--primary); border: 1px solid rgba(255,107,107,0.3); }
+  .badge-mc { background: rgba(78,205,196,0.2); color: var(--accent); border: 1px solid rgba(78,205,196,0.3); }
+
+  .question-text {
+    font-size: clamp(1.1rem, 3vw, 1.4rem);
+    font-weight: 800;
+    line-height: 1.5;
+    margin-bottom: 28px;
+    color: white;
+  }
+
+  /* Answer options */
+  .options-grid {
+    display: grid;
+    gap: 14px;
+  }
+
+  .option-btn {
+    width: 100%;
+    padding: 18px 24px;
+    background: rgba(255,255,255,0.06);
+    border: 2px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .option-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+    background: linear-gradient(135deg, rgba(78,205,196,0.1), rgba(78,205,196,0.05));
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    transform: translateX(6px) scale(1.01);
+    box-shadow: 0 4px 20px rgba(78,205,196,0.2);
+  }
+
+  .option-btn:hover:not(:disabled)::before { opacity: 1; }
+
+  .option-label {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    transition: all 0.3s;
+  }
+
+  .option-btn.selected {
+    border-color: var(--accent);
+    background: rgba(78,205,196,0.15);
+    transform: translateX(6px);
+  }
+
+  .option-btn.selected .option-label {
+    background: var(--accent);
+    color: var(--dark);
+  }
+
+  .option-btn.correct {
+    border-color: var(--success);
+    background: rgba(107,203,119,0.15);
+    animation: correctPulse 0.5s ease;
+  }
+
+  .option-btn.correct .option-label {
+    background: var(--success);
+    color: white;
+  }
+
+  .option-btn.wrong {
+    border-color: var(--error);
+    background: rgba(255,77,77,0.15);
+    animation: shake 0.5s ease;
+  }
+
+  .option-btn.wrong .option-label {
+    background: var(--error);
+    color: white;
+  }
+
+  .option-btn:disabled { cursor: not-allowed; }
+
+  @keyframes correctPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.03) translateX(6px); }
+    100% { transform: scale(1) translateX(6px); }
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(6px); }
+    25% { transform: translateX(0px); }
+    75% { transform: translateX(12px); }
+  }
+
+  /* Feedback overlay */
+  .feedback-overlay {
+    text-align: center;
+    padding: 20px;
+    border-radius: 16px;
+    margin-top: 20px;
+    display: none;
+    animation: fadeSlideIn 0.4s ease;
+  }
+
+  .feedback-overlay.correct-fb { background: rgba(107,203,119,0.15); border: 1px solid rgba(107,203,119,0.3); }
+  .feedback-overlay.wrong-fb { background: rgba(255,77,77,0.15); border: 1px solid rgba(255,77,77,0.3); }
+
+  .feedback-icon { font-size: 2.5rem; }
+  .feedback-text { font-weight: 800; font-size: 1.1rem; margin: 8px 0; }
+
+  /* === RESULT SCREEN === */
+  .result-hero {
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  .result-emoji {
+    font-size: 5rem;
+    display: block;
+    margin-bottom: 16px;
+    animation: resultBounce 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes resultBounce {
+    from { transform: scale(0) rotate(-20deg); opacity: 0; }
+    to { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+
+  .result-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, var(--secondary), var(--primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .result-subtitle { color: rgba(234,234,234,0.7); margin-top: 8px; }
+
+  .score-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 24px 0;
+  }
+
+  .score-number {
+    font-family: 'Fredoka One', cursive;
+    font-size: 4rem;
+    color: var(--secondary);
+    line-height: 1;
+  }
+
+  .score-total { font-size: 1.5rem; color: rgba(234,234,234,0.5); font-weight: 800; margin-top: 12px; }
+
+  .lottery-box {
+    background: linear-gradient(135deg, rgba(255,230,109,0.15), rgba(255,107,107,0.15));
+    border: 2px solid rgba(255,230,109,0.4);
+    border-radius: 20px;
+    padding: 28px;
+    text-align: center;
+    margin: 24px 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .lottery-box::before {
+    content: '🎊 🎉 🎊';
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.2rem;
+    animation: sparkle 2s infinite;
+  }
+
+  @keyframes sparkle {
+    0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
+    50% { opacity: 0.6; transform: translateX(-50%) scale(1.1); }
+  }
+
+  .lottery-code {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2.5rem;
+    color: var(--secondary);
+    letter-spacing: 8px;
+    margin: 12px 0;
+    text-shadow: 0 0 30px rgba(255,230,109,0.6);
+  }
+
+  /* === ADMIN SCREEN === */
+  .admin-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .admin-badge {
+    background: linear-gradient(135deg, var(--purple), #7c3aed);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: rgba(255,255,255,0.05);
+    padding: 6px;
+    border-radius: 16px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+
+  .tab {
+    flex: 1;
+    min-width: 80px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 12px;
+    background: transparent;
+    color: rgba(234,234,234,0.5);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+  }
+
+  .tab.active {
+    background: rgba(255,255,255,0.12);
+    color: var(--text);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; animation: fadeSlideIn 0.3s ease; }
+
+  /* Question editor */
+  .question-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    transition: all 0.3s;
+  }
+
+  .question-card:hover { border-color: rgba(255,255,255,0.15); }
+
+  .question-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+
+  .question-number {
+    font-weight: 900;
+    font-size: 0.9rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* Participants table */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  .data-table th {
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.06);
+    text-align: left;
+    font-weight: 800;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  .data-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-weight: 600;
+  }
+
+  .data-table tr:hover td { background: rgba(255,255,255,0.03); }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+
+  .status-passed { background: rgba(107,203,119,0.2); color: var(--success); }
+  .status-failed { background: rgba(255,77,77,0.2); color: var(--error); }
+  .status-won { background: rgba(255,230,109,0.2); color: var(--secondary); }
+
+  /* Lottery section */
+  .lottery-pool {
+    text-align: center;
+    padding: 32px;
+  }
+
+  .pool-count {
+    font-family: 'Fredoka One', cursive;
+    font-size: 5rem;
+    color: var(--secondary);
+    line-height: 1;
+    text-shadow: 0 0 40px rgba(255,230,109,0.5);
+  }
+
+  .lottery-result-name {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2.5rem;
+    color: var(--primary);
+    margin: 16px 0;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .spinning-text {
+    animation: textFlash 0.08s infinite;
+  }
+
+  @keyframes textFlash {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.05); }
+  }
+
+  /* === ALERT === */
+  .alert {
+    padding: 14px 20px;
+    border-radius: 14px;
+    margin-bottom: 16px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: fadeSlideIn 0.3s ease;
+  }
+
+  .alert-success { background: rgba(107,203,119,0.15); border: 1px solid rgba(107,203,119,0.3); color: var(--success); }
+  .alert-error { background: rgba(255,77,77,0.15); border: 1px solid rgba(255,77,77,0.3); color: var(--error); }
+  .alert-info { background: rgba(78,205,196,0.15); border: 1px solid rgba(78,205,196,0.3); color: var(--accent); }
+
+  /* === RESPONSIVE === */
+  @media (max-width: 480px) {
+    .card { padding: 20px; }
+    .quiz-meta { flex-direction: column; gap: 8px; align-items: flex-start; }
+  }
+
+  /* === LOADING === */
+  .loading-spinner {
+    display: inline-block;
+    width: 20px; height: 20px;
+    border: 3px solid rgba(255,255,255,0.2);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 0.8s linear infinite;
+    vertical-align: middle;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* === PASSWORD SCREEN === */
+  .lock-icon {
+    text-align: center;
+    font-size: 4rem;
+    margin-bottom: 16px;
+    animation: lockShake 0s;
+  }
+
+  .lock-icon.shake {
+    animation: lockShake 0.5s ease;
+  }
+
+  @keyframes lockShake {
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    20% { transform: translateX(-8px) rotate(-5deg); }
+    40% { transform: translateX(8px) rotate(5deg); }
+    60% { transform: translateX(-6px) rotate(-3deg); }
+    80% { transform: translateX(6px) rotate(3deg); }
+  }
+
+  /* Confetti */
+  .confetti-container {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 999;
+    overflow: hidden;
+  }
+
+  .confetti-piece {
+    position: absolute;
+    width: 10px; height: 10px;
+    animation: confettiFall linear forwards;
+  }
+
+  @keyframes confettiFall {
+    0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* Floating admin btn */
+  .admin-float-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 100;
+    opacity: 0.4;
+    transition: opacity 0.3s;
+  }
+
+  .admin-float-btn:hover { opacity: 1; }
+
+  /* Toggle */
+  .toggle-group {
+    display: flex;
+    gap: 8px;
+  }
+
+  .toggle-option {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    background: transparent;
+    color: rgba(234,234,234,0.5);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 0.85rem;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s;
+  }
+
+  .toggle-option.selected {
+    border-color: var(--accent);
+    background: rgba(78,205,196,0.12);
+    color: var(--accent);
+  }
+
+  /* Prize tags */
+  .prize-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .prize-tag {
+    background: rgba(255,230,109,0.15);
+    border: 1px solid rgba(255,230,109,0.3);
+    color: var(--secondary);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .prize-tag-remove {
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 1rem;
+    padding: 0;
+  }
+
+  .prize-tag-remove:hover { opacity: 1; }
+
+  .hidden { display: none !important; }
+
+  .section-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.4rem;
+    color: var(--secondary);
+    margin-bottom: 16px;
+  }
+
+  .divider {
+    height: 1px;
+    background: rgba(255,255,255,0.08);
+    margin: 24px 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- Confetti container -->
+<div class="confetti-container" id="confettiContainer"></div>
+
+<!-- Admin float button -->
+<div class="admin-float-btn">
+  <button class="btn btn-outline btn-sm" onclick="showPasswordScreen()">⚙️ 管理</button>
+</div>
+
+<!-- ==================== HOME SCREEN ==================== -->
+<div id="screen-home" class="screen active">
+  <div class="container">
+    <div class="game-header">
+      <span class="trophy-emoji">🏆</span>
+      <h1 class="game-title" id="homeTitleDisplay">問答小學堂</h1>
+      <p class="game-subtitle" id="homeSubtitleDisplay">有獎徵答活動</p>
+    </div>
+
+    <div class="card">
+      <div class="quiz-info-grid">
+        <div class="info-badge">
+          <div class="badge-icon">📝</div>
+          <div class="badge-value" id="homeQuestionCount">0</div>
+          <div class="badge-label">題目數量</div>
+        </div>
+        <div class="info-badge">
+          <div class="badge-icon">🎯</div>
+          <div class="badge-value">100%</div>
+          <div class="badge-label">全對才算過</div>
+        </div>
+        <div class="info-badge">
+          <div class="badge-icon">🎁</div>
+          <div class="badge-value" id="homePrizeCount">0</div>
+          <div class="badge-label">獎品數量</div>
+        </div>
+      </div>
+
+      <p class="section-title">📋 活動規則</p>
+      <ul class="rules-list">
+        <li>請填寫個人資料後開始作答</li>
+        <li>所有題目<strong>必須全部答對</strong>才能獲得抽獎資格</li>
+        <li>答題過程中無法返回修改答案</li>
+        <li>每人限填寫一次，請確認資料正確後送出</li>
+        <li>中獎結果以現場抽獎為準</li>
+      </ul>
+
+      <div id="homePrizesDisplay" style="margin-top:16px;"></div>
+
+      <button class="btn btn-primary btn-lg btn-block" style="margin-top:24px;" onclick="showScreen('screen-register')">
+        🚀 開始作答
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== REGISTER SCREEN ==================== -->
+<div id="screen-register" class="screen">
+  <div class="container">
+    <div class="game-header" style="padding-top:24px;">
+      <h1 class="game-title" style="font-size:2rem;">📝 填寫資料</h1>
+    </div>
+
+    <div class="card">
+      <div class="step-indicator">
+        <div class="step active" id="step1">1</div>
+        <div class="step-line" id="stepLine1"></div>
+        <div class="step" id="step2">2</div>
+        <div class="step-line" id="stepLine2"></div>
+        <div class="step" id="step3">🏆</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">👤 姓名</label>
+        <input type="text" class="form-input" id="regName" placeholder="請輸入您的姓名" maxlength="20">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">🏫 班級</label>
+        <input type="text" class="form-input" id="regClass" placeholder="請輸入班級（例：501）" maxlength="10">
+      </div>
+
+      <div id="extraFieldsContainer"></div>
+
+      <div id="regAlert"></div>
+
+      <div style="display:flex;gap:12px;margin-top:8px;">
+        <button class="btn btn-outline" onclick="showScreen('screen-home')" style="flex:1;">← 返回</button>
+        <button class="btn btn-primary" onclick="startQuiz()" style="flex:2;">開始答題 →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== QUIZ SCREEN ==================== -->
+<div id="screen-quiz" class="screen">
+  <div class="container">
+    <div style="padding-top:20px;">
+      <div class="quiz-progress-bar">
+        <div class="quiz-progress-fill" id="quizProgressFill" style="width:0%"></div>
+      </div>
+
+      <div class="quiz-meta">
+        <span class="question-counter" id="quizCounter">題目 1 / 10</span>
+        <span class="question-type-badge" id="questionTypeBadge">是非題</span>
+      </div>
+
+      <div class="card">
+        <p class="question-text" id="questionText">題目載入中...</p>
+
+        <div class="options-grid" id="optionsGrid"></div>
+
+        <div class="feedback-overlay" id="feedbackOverlay">
+          <div class="feedback-icon" id="feedbackIcon"></div>
+          <div class="feedback-text" id="feedbackText"></div>
+          <div id="feedbackExplanation" style="font-size:0.9rem;color:rgba(234,234,234,0.7);margin-top:8px;"></div>
+        </div>
+
+        <button class="btn btn-accent btn-block" id="nextBtn" onclick="nextQuestion()" style="margin-top:20px;display:none;">
+          下一題 →
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== RESULT SCREEN ==================== -->
+<div id="screen-result" class="screen">
+  <div class="container">
+    <div class="game-header" style="padding-top:24px;">
+      <div class="result-hero">
+        <span class="result-emoji" id="resultEmoji">🎉</span>
+        <h2 class="result-title" id="resultTitle">恭喜過關！</h2>
+        <p class="result-subtitle" id="resultSubtitle">太厲害了！</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="score-display">
+        <div>
+          <div style="font-size:0.9rem;color:rgba(234,234,234,0.6);font-weight:700;text-align:center;">得分</div>
+          <div style="display:flex;align-items:baseline;gap:4px;">
+            <div class="score-number" id="scoreCorrect">0</div>
+            <div class="score-total" id="scoreTotal">/ 0</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="lotteryBox" class="lottery-box hidden" style="margin-top:0;">
+        <div style="padding-top:28px;">
+          <p style="font-size:0.9rem;font-weight:800;color:rgba(234,234,234,0.7);text-transform:uppercase;letter-spacing:2px;">🎟️ 您的抽獎序號</p>
+          <div class="lottery-code" id="lotteryCode">------</div>
+          <p style="font-size:0.85rem;color:rgba(234,234,234,0.6);">請截圖保存此頁面，現場出示序號參加抽獎</p>
+        </div>
+      </div>
+
+      <div id="failBox" class="hidden" style="text-align:center;padding:20px;">
+        <p style="font-size:1rem;font-weight:700;color:rgba(234,234,234,0.7);">很遺憾，沒有全部答對！</p>
+        <p style="font-size:0.9rem;color:rgba(234,234,234,0.5);margin-top:8px;">請繼續加油，下次一定可以！💪</p>
+      </div>
+
+      <div class="divider"></div>
+
+      <p style="font-size:0.9rem;font-weight:700;color:rgba(234,234,234,0.6);text-align:center;margin-bottom:16px;">題目答題狀況</p>
+      <div id="answerReview"></div>
+
+      <button class="btn btn-outline btn-block" onclick="showScreen('screen-home')" style="margin-top:20px;">
+        🏠 返回首頁
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PASSWORD SCREEN ==================== -->
+<div id="screen-password" class="screen">
+  <div class="container" style="max-width:400px;">
+    <div class="game-header" style="padding-top:40px;">
+      <h1 class="game-title" style="font-size:2rem;">🔐 管理員登入</h1>
+    </div>
+
+    <div class="card">
+      <div class="lock-icon" id="lockIcon">🔒</div>
+
+      <div class="form-group">
+        <label class="form-label">管理員密碼</label>
+        <input type="password" class="form-input" id="adminPassword" placeholder="請輸入密碼"
+          onkeydown="if(event.key==='Enter') checkPassword()">
+      </div>
+
+      <div id="passwordAlert"></div>
+
+      <div style="display:flex;gap:12px;">
+        <button class="btn btn-outline" onclick="showScreen('screen-home')" style="flex:1;">取消</button>
+        <button class="btn btn-purple" onclick="checkPassword()" style="flex:2;">🔓 進入管理</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== ADMIN SCREEN ==================== -->
+<div id="screen-admin" class="screen">
+  <div class="container">
+    <div style="padding-top:20px;">
+      <div class="admin-header">
+        <div>
+          <h2 style="font-family:'Fredoka One',cursive;font-size:1.8rem;color:var(--text);">⚙️ 管理後台</h2>
+          <p style="font-size:0.85rem;color:rgba(234,234,234,0.5);margin-top:4px;">問答小學堂管理系統</p>
+        </div>
+        <span class="admin-badge">ADMIN</span>
+        <button class="btn btn-outline btn-sm" onclick="showScreen('screen-home')" style="margin-left:auto;">← 前台</button>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('tab-settings')">⚙️ 設定</button>
+        <button class="tab" onclick="switchTab('tab-questions')">📝 題目</button>
+        <button class="tab" onclick="switchTab('tab-lottery')">🎰 抽獎</button>
+        <button class="tab" onclick="switchTab('tab-data')">📊 資料</button>
+      </div>
+
+      <!-- TAB: Settings -->
+      <div id="tab-settings" class="tab-content active">
+        <div class="card">
+          <p class="section-title">🎨 活動設定</p>
+
+          <div class="form-group">
+            <label class="form-label">活動標題</label>
+            <input type="text" class="form-input" id="settingTitle" value="問答小學堂" placeholder="活動標題">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">副標題</label>
+            <input type="text" class="form-input" id="settingSubtitle" value="有獎徵答活動" placeholder="副標題">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">🎁 獎品設定</label>
+            <div style="display:flex;gap:8px;">
+              <input type="text" class="form-input" id="prizeInput" placeholder="輸入獎品名稱後按 + 新增" style="flex:1;">
+              <button class="btn btn-yellow btn-sm" onclick="addPrize()" style="flex-shrink:0;">+</button>
+            </div>
+            <div class="prize-tags" id="prizeTags"></div>
+          </div>
+
+          <div class="divider"></div>
+
+          <p class="section-title">📡 Google 試算表連結</p>
+
+          <div class="form-group">
+            <label class="form-label">Apps Script Web App URL</label>
+            <input type="url" class="form-input" id="settingScriptUrl" placeholder="https://script.google.com/macros/s/...">
+            <p style="font-size:0.8rem;color:rgba(234,234,234,0.4);margin-top:6px;">部署 Google Apps Script 後貼入 Web App URL</p>
+          </div>
+
+          <div id="settingsAlert"></div>
+
+          <button class="btn btn-accent btn-block" onclick="saveSettings()" style="margin-top:8px;">
+            💾 儲存設定
+          </button>
+        </div>
+      </div>
+
+      <!-- TAB: Questions -->
+      <div id="tab-questions" class="tab-content">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+            <p class="section-title" style="margin:0;">📝 題目管理</p>
+            <button class="btn btn-primary btn-sm" onclick="addQuestion()">+ 新增題目</button>
+          </div>
+
+          <div id="questionsList"></div>
+
+          <button class="btn btn-accent btn-block" onclick="saveQuestions()" style="margin-top:8px;">
+            💾 儲存所有題目
+          </button>
+        </div>
+      </div>
+
+      <!-- TAB: Lottery -->
+      <div id="tab-lottery" class="tab-content">
+        <div class="card">
+          <p class="section-title">🎰 抽獎管理</p>
+
+          <div class="lottery-pool">
+            <p style="font-size:0.9rem;font-weight:800;color:rgba(234,234,234,0.6);text-transform:uppercase;letter-spacing:2px;">抽獎人數</p>
+            <div class="pool-count" id="lotteryPoolCount">0</div>
+            <p style="font-size:0.85rem;color:rgba(234,234,234,0.4);margin-top:8px;">位已通過全對條件</p>
+          </div>
+
+          <div class="lottery-result-name" id="lotteryResultName">---</div>
+
+          <div id="lotteryAlert"></div>
+
+          <div style="display:flex;gap:12px;">
+            <button class="btn btn-yellow btn-block" onclick="drawLottery()" id="drawBtn">
+              🎲 開始抽獎！
+            </button>
+          </div>
+
+          <div style="margin-top:16px;">
+            <button class="btn btn-outline btn-block btn-sm" onclick="resetLottery()">
+              🔄 重置抽獎（不清除資料）
+            </button>
+          </div>
+        </div>
+
+        <div class="card">
+          <p class="section-title">🏆 已抽出得獎者</p>
+          <div id="winnersListAdmin"></div>
+          <p id="noWinnersMsg" style="text-align:center;color:rgba(234,234,234,0.4);font-size:0.9rem;">尚無得獎紀錄</p>
+        </div>
+      </div>
+
+      <!-- TAB: Data -->
+      <div id="tab-data" class="tab-content">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+            <p class="section-title" style="margin:0;">📊 參加資料</p>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-accent btn-sm" onclick="loadParticipants()">🔄 重新載入</button>
+              <button class="btn btn-yellow btn-sm" onclick="exportCSV()">📥 匯出 CSV</button>
+            </div>
+          </div>
+
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>姓名</th>
+                  <th>班級</th>
+                  <th>狀態</th>
+                  <th>序號</th>
+                  <th>時間</th>
+                </tr>
+              </thead>
+              <tbody id="participantsTable">
+                <tr><td colspan="6" style="text-align:center;color:rgba(234,234,234,0.4);padding:32px;">尚無資料</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div id="dataAlert" style="margin-top:16px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// =============================================
+// STATE
+// =============================================
+const ADMIN_PASSWORD = 'S2860885110';
+
+let state = {
+  settings: {
+    title: '問答小學堂',
+    subtitle: '有獎徵答活動',
+    answerOrder: 'random',
+    prizes: [],
+    scriptUrl: ''
+  },
+  questions: [
+    {
+      id: 1,
+      type: 'tf',
+      text: '台灣的首都是台北市。',
+      options: ['正確', '錯誤'],
+      answer: 0,
+      explanation: '台灣政府所在地確實位於台北市。'
+    },
+    {
+      id: 2,
+      type: 'mc',
+      text: '下列哪個是台灣最高的山？',
+      options: ['雪山', '玉山', '合歡山', '大雪山'],
+      answer: 1,
+      explanation: '玉山海拔 3,952 公尺，是台灣最高峰。'
+    },
+    {
+      id: 3,
+      type: 'tf',
+      text: '太陽從東邊升起，西邊落下。',
+      options: ['正確', '錯誤'],
+      answer: 0,
+      explanation: '這是基本的天文常識。'
+    }
+  ],
+  participants: [],
+  winners: [],
+  currentUser: null,
+  quizState: {
+    currentIndex: 0,
+    shuffledQuestions: [],
+    answers: [],
+    correct: 0
+  }
+};
+
+// Load from localStorage
+function loadState() {
+  const saved = localStorage.getItem('quizGameState');
+  if (saved) {
+    const parsed = JSON.parse(saved);
+    state.settings = { ...state.settings, ...parsed.settings };
+    if (parsed.questions?.length) state.questions = parsed.questions;
+    if (parsed.participants) state.participants = parsed.participants;
+    if (parsed.winners) state.winners = parsed.winners;
+  }
+}
+
+function saveState() {
+  localStorage.setItem('quizGameState', JSON.stringify({
+    settings: state.settings,
+    questions: state.questions,
+    participants: state.participants,
+    winners: state.winners
+  }));
+}
+
+// =============================================
+// SCREEN MANAGEMENT
+// =============================================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+  if (id === 'screen-home') updateHomeScreen();
+  if (id === 'screen-admin') updateAdminScreen();
+}
+
+function showPasswordScreen() {
+  document.getElementById('adminPassword').value = '';
+  document.getElementById('passwordAlert').innerHTML = '';
+  showScreen('screen-password');
+}
+
+function updateHomeScreen() {
+  document.getElementById('homeTitleDisplay').textContent = state.settings.title;
+  document.getElementById('homeSubtitleDisplay').textContent = state.settings.subtitle;
+  document.getElementById('homeQuestionCount').textContent = state.questions.length;
+  document.getElementById('homePrizeCount').textContent = state.settings.prizes.length;
+
+  const prizesEl = document.getElementById('homePrizesDisplay');
+  if (state.settings.prizes.length > 0) {
+    prizesEl.innerHTML = `
+      <p style="font-weight:800;font-size:0.9rem;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">🎁 活動獎品</p>
+      <div class="prize-tags">
+        ${state.settings.prizes.map(p => `<div class="prize-tag">🏆 ${p}</div>`).join('')}
+      </div>
+    `;
+  } else {
+    prizesEl.innerHTML = '';
+  }
+}
+
+// =============================================
+// PASSWORD
+// =============================================
+function checkPassword() {
+  const pw = document.getElementById('adminPassword').value;
+  const alertEl = document.getElementById('passwordAlert');
+  if (pw === ADMIN_PASSWORD) {
+    showScreen('screen-admin');
+  } else {
+    alertEl.innerHTML = '<div class="alert alert-error">❌ 密碼錯誤，請重新輸入</div>';
+    const lockIcon = document.getElementById('lockIcon');
+    lockIcon.classList.remove('shake');
+    void lockIcon.offsetWidth;
+    lockIcon.classList.add('shake');
+  }
+}
+
+// =============================================
+// QUIZ FLOW
+// =============================================
+function startQuiz() {
+  const name = document.getElementById('regName').value.trim();
+  const classRoom = document.getElementById('regClass').value.trim();
+  const alertEl = document.getElementById('regAlert');
+
+  if (!name) { alertEl.innerHTML = '<div class="alert alert-error">❌ 請填寫姓名</div>'; return; }
+  if (!classRoom) { alertEl.innerHTML = '<div class="alert alert-error">❌ 請填寫班級</div>'; return; }
+
+  alertEl.innerHTML = '';
+  state.currentUser = { name, classRoom, startTime: new Date().toISOString() };
+
+  // Shuffle questions
+  let qs = [...state.questions];
+  for (let i = qs.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [qs[i], qs[j]] = [qs[j], qs[i]];
+  }
+
+  // 永遠隨機打亂選項順序（是非題 + 選擇題都適用）
+  state.quizState = {
+    currentIndex: 0,
+    shuffledQuestions: qs.map(q => {
+      const optionsWithIdx = q.options.map((opt, i) => ({ opt, i }));
+      for (let i = optionsWithIdx.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [optionsWithIdx[i], optionsWithIdx[j]] = [optionsWithIdx[j], optionsWithIdx[i]];
+      }
+      return {
+        ...q,
+        displayOptions: optionsWithIdx.map(o => o.opt),
+        displayAnswer: optionsWithIdx.findIndex(o => o.i === q.answer)
+      };
+    }),
+    answers: [],
+    correct: 0
+  };
+
+  showScreen('screen-quiz');
+  renderQuestion();
+
+  // Update steps
+  document.getElementById('step1').classList.remove('active');
+  document.getElementById('step1').classList.add('done');
+  document.getElementById('stepLine1').classList.add('done');
+  document.getElementById('step2').classList.add('active');
+}
+
+function renderQuestion() {
+  const { currentIndex, shuffledQuestions } = state.quizState;
+  const q = shuffledQuestions[currentIndex];
+  const total = shuffledQuestions.length;
+
+  // Progress
+  document.getElementById('quizProgressFill').style.width = `${(currentIndex / total) * 100}%`;
+  document.getElementById('quizCounter').textContent = `題目 ${currentIndex + 1} / ${total}`;
+
+  // Type badge
+  const typeBadge = document.getElementById('questionTypeBadge');
+  typeBadge.textContent = q.type === 'tf' ? '是非題' : '選擇題';
+  typeBadge.className = `question-type-badge ${q.type === 'tf' ? 'badge-tf' : 'badge-mc'}`;
+
+  document.getElementById('questionText').textContent = q.text;
+
+  const optionsGrid = document.getElementById('optionsGrid');
+  const labels = ['A', 'B', 'C', 'D', 'E', 'F'];
+  optionsGrid.innerHTML = q.displayOptions.map((opt, i) => `
+    <button class="option-btn" onclick="selectAnswer(${i})" data-index="${i}">
+      <div class="option-label">${q.type === 'tf' ? (i === 0 ? '✓' : '✗') : labels[i]}</div>
+      <span>${opt}</span>
+    </button>
+  `).join('');
+
+  // Hide feedback & next btn
+  document.getElementById('feedbackOverlay').style.display = 'none';
+  document.getElementById('feedbackOverlay').className = 'feedback-overlay';
+  document.getElementById('nextBtn').style.display = 'none';
+}
+
+function selectAnswer(selectedIdx) {
+  const { currentIndex, shuffledQuestions } = state.quizState;
+  const q = shuffledQuestions[currentIndex];
+  const isCorrect = selectedIdx === q.displayAnswer;
+
+  // Disable all buttons
+  document.querySelectorAll('.option-btn').forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.displayAnswer) btn.classList.add('correct');
+    else if (i === selectedIdx && !isCorrect) btn.classList.add('wrong');
+  });
+
+  // Record answer
+  state.quizState.answers.push({ questionId: q.id, selected: selectedIdx, correct: isCorrect });
+  if (isCorrect) state.quizState.correct++;
+
+  // Show feedback
+  const overlay = document.getElementById('feedbackOverlay');
+  overlay.style.display = 'block';
+  overlay.className = `feedback-overlay ${isCorrect ? 'correct-fb' : 'wrong-fb'}`;
+  document.getElementById('feedbackIcon').textContent = isCorrect ? '🎉' : '😢';
+  document.getElementById('feedbackText').textContent = isCorrect ? '答對了！太棒了！' : '答錯了！沒關係！';
+  document.getElementById('feedbackExplanation').textContent = q.explanation || '';
+
+  document.getElementById('nextBtn').style.display = 'flex';
+  document.getElementById('nextBtn').textContent = currentIndex + 1 >= shuffledQuestions.length ? '查看結果 🏆' : '下一題 →';
+}
+
+function nextQuestion() {
+  state.quizState.currentIndex++;
+  if (state.quizState.currentIndex >= state.quizState.shuffledQuestions.length) {
+    showResult();
+  } else {
+    renderQuestion();
+  }
+}
+
+function showResult() {
+  const { correct, shuffledQuestions, answers } = state.quizState;
+  const total = shuffledQuestions.length;
+  const passed = correct === total;
+
+  showScreen('screen-result');
+
+  document.getElementById('resultEmoji').textContent = passed ? '🏆' : '😢';
+  document.getElementById('resultTitle').textContent = passed ? '🎉 恭喜全對！' : '答題結束';
+  document.getElementById('resultSubtitle').textContent = passed
+    ? '您已取得抽獎資格！'
+    : `答對 ${correct} 題，共 ${total} 題，請繼續努力！`;
+
+  document.getElementById('scoreCorrect').textContent = correct;
+  document.getElementById('scoreTotal').textContent = `/ ${total}`;
+
+  let lotteryCode = null;
+  if (passed) {
+    lotteryCode = generateCode();
+    document.getElementById('lotteryBox').classList.remove('hidden');
+    document.getElementById('failBox').classList.add('hidden');
+    document.getElementById('lotteryCode').textContent = lotteryCode;
+    launchConfetti();
+  } else {
+    document.getElementById('lotteryBox').classList.add('hidden');
+    document.getElementById('failBox').classList.remove('hidden');
+  }
+
+  // Answer review
+  const reviewEl = document.getElementById('answerReview');
+  reviewEl.innerHTML = answers.map((a, i) => {
+    const q = shuffledQuestions[i];
+    return `
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+        <span style="font-size:1.2rem;">${a.correct ? '✅' : '❌'}</span>
+        <span style="font-size:0.9rem;font-weight:600;color:rgba(234,234,234,0.8);flex:1;">${q.text.substring(0,40)}${q.text.length>40?'...':''}</span>
+        <span style="font-size:0.8rem;font-weight:700;color:${a.correct?'var(--success)':'var(--error)'};">${a.correct?'答對':'答錯'}</span>
+      </div>
+    `;
+  }).join('');
+
+  // Save participant
+  const participant = {
+    ...state.currentUser,
+    correct,
+    total,
+    passed,
+    lotteryCode,
+    won: false,
+    endTime: new Date().toISOString()
+  };
+
+  state.participants.push(participant);
+  saveState();
+  submitToGoogleSheet(participant);
+}
+
+function generateCode() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let code = '';
+  for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  return code;
+}
+
+// =============================================
+// GOOGLE APPS SCRIPT SUBMIT
+// =============================================
+async function submitToGoogleSheet(data) {
+  if (!state.settings.scriptUrl) return;
+  try {
+    await fetch(state.settings.scriptUrl, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'submit', data })
+    });
+  } catch (e) {
+    console.log('Google Sheet submit error:', e);
+  }
+}
+
+async function fetchFromGoogleSheet(action) {
+  if (!state.settings.scriptUrl) return null;
+  try {
+    const res = await fetch(`${state.settings.scriptUrl}?action=${action}`);
+    return await res.json();
+  } catch (e) {
+    console.log('Google Sheet fetch error:', e);
+    return null;
+  }
+}
+
+// =============================================
+// ADMIN
+// =============================================
+function updateAdminScreen() {
+  document.getElementById('settingTitle').value = state.settings.title;
+  document.getElementById('settingSubtitle').value = state.settings.subtitle;
+  document.getElementById('settingScriptUrl').value = state.settings.scriptUrl || '';
+
+  renderPrizeTags();
+  renderQuestionsList();
+  updateLotteryTab();
+  loadParticipants();
+}
+
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  event.target.classList.add('active');
+
+  if (tabId === 'tab-lottery') updateLotteryTab();
+  if (tabId === 'tab-data') loadParticipants();
+}
+
+function addPrize() {
+  const input = document.getElementById('prizeInput');
+  const val = input.value.trim();
+  if (val) {
+    state.settings.prizes.push(val);
+    input.value = '';
+    renderPrizeTags();
+  }
+}
+
+function removePrize(i) {
+  state.settings.prizes.splice(i, 1);
+  renderPrizeTags();
+}
+
+function renderPrizeTags() {
+  document.getElementById('prizeTags').innerHTML = state.settings.prizes.map((p, i) => `
+    <div class="prize-tag">
+      🏆 ${p}
+      <button class="prize-tag-remove" onclick="removePrize(${i})">×</button>
+    </div>
+  `).join('');
+}
+
+function saveSettings() {
+  state.settings.title = document.getElementById('settingTitle').value.trim() || '問答小學堂';
+  state.settings.subtitle = document.getElementById('settingSubtitle').value.trim();
+  state.settings.scriptUrl = document.getElementById('settingScriptUrl').value.trim();
+  saveState();
+  document.getElementById('settingsAlert').innerHTML = '<div class="alert alert-success">✅ 設定已儲存！</div>';
+  setTimeout(() => document.getElementById('settingsAlert').innerHTML = '', 3000);
+}
+
+// === QUESTIONS ===
+function renderQuestionsList() {
+  const container = document.getElementById('questionsList');
+  if (state.questions.length === 0) {
+    container.innerHTML = '<p style="text-align:center;color:rgba(234,234,234,0.4);padding:20px;">尚無題目，點擊「新增題目」開始建立</p>';
+    return;
+  }
+
+  container.innerHTML = state.questions.map((q, i) => `
+    <div class="question-card" id="qcard-${q.id}">
+      <div class="question-card-header">
+        <span class="question-number">題目 ${i + 1}</span>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-outline btn-sm" onclick="moveQuestion(${i}, -1)" ${i===0?'disabled':''}>↑</button>
+          <button class="btn btn-outline btn-sm" onclick="moveQuestion(${i}, 1)" ${i===state.questions.length-1?'disabled':''}>↓</button>
+          <button class="btn btn-sm" style="background:rgba(255,77,77,0.2);color:var(--error);border:1px solid rgba(255,77,77,0.3);" onclick="removeQuestion(${i})">🗑️</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">題型</label>
+        <div class="toggle-group" style="margin-bottom:0;">
+          <button class="toggle-option ${q.type==='tf'?'selected':''}" onclick="changeQType(${i},'tf',this)">是非題</button>
+          <button class="toggle-option ${q.type==='mc'?'selected':''}" onclick="changeQType(${i},'mc',this)">選擇題</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">題目內容</label>
+        <textarea class="form-textarea" onchange="updateQuestion(${i},'text',this.value)">${q.text}</textarea>
+      </div>
+
+      <div id="qoptions-${q.id}">
+        ${renderOptionsEditor(q, i)}
+      </div>
+
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">解析（選填）</label>
+        <input type="text" class="form-input" value="${q.explanation||''}" placeholder="答題後顯示的說明" onchange="updateQuestion(${i},'explanation',this.value)">
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderOptionsEditor(q, i) {
+  if (q.type === 'tf') {
+    return `
+      <div class="form-group">
+        <label class="form-label">正確答案</label>
+        <div class="toggle-group">
+          <button class="toggle-option ${q.answer===0?'selected':''}" onclick="setAnswer(${i},0,this.closest('.toggle-group'))">✓ 正確</button>
+          <button class="toggle-option ${q.answer===1?'selected':''}" onclick="setAnswer(${i},1,this.closest('.toggle-group'))">✗ 錯誤</button>
+        </div>
+      </div>
+    `;
+  } else {
+    const maxOpts = 4;
+    return `
+      <div class="form-group">
+        <label class="form-label">選項（點擊選項設為正確答案）</label>
+        ${q.options.map((opt, oi) => `
+          <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center;">
+            <div class="option-label" style="flex-shrink:0;cursor:pointer;background:${oi===q.answer?'var(--success)':'rgba(255,255,255,0.1)'}"
+              onclick="setAnswer(${i},${oi})">
+              ${'ABCD'[oi]}
+            </div>
+            <input type="text" class="form-input" value="${opt}" style="flex:1;"
+              onchange="updateOption(${i},${oi},this.value)">
+            ${q.options.length > 2 ? `<button class="btn btn-sm" style="background:rgba(255,77,77,0.2);color:var(--error);border:1px solid rgba(255,77,77,0.3);flex-shrink:0;" onclick="removeOption(${i},${oi})">×</button>` : ''}
+          </div>
+        `).join('')}
+        ${q.options.length < maxOpts ? `<button class="btn btn-outline btn-sm" onclick="addOption(${i})">+ 新增選項</button>` : ''}
+      </div>
+    `;
+  }
+}
+
+function changeQType(qIdx, type, btn) {
+  btn.closest('.toggle-group').querySelectorAll('.toggle-option').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.questions[qIdx].type = type;
+  if (type === 'tf') {
+    state.questions[qIdx].options = ['正確', '錯誤'];
+    state.questions[qIdx].answer = 0;
+  } else {
+    state.questions[qIdx].options = ['選項A', '選項B', '選項C', '選項D'];
+    state.questions[qIdx].answer = 0;
+  }
+  document.getElementById(`qoptions-${state.questions[qIdx].id}`).innerHTML = renderOptionsEditor(state.questions[qIdx], qIdx);
+}
+
+function updateQuestion(i, field, value) { state.questions[i][field] = value; }
+function updateOption(qi, oi, val) { state.questions[qi].options[oi] = val; }
+
+function setAnswer(qi, ansIdx) {
+  state.questions[qi].answer = ansIdx;
+  renderQuestionsList(); // re-render to update highlights
+}
+
+function addOption(qi) {
+  state.questions[qi].options.push('新選項');
+  document.getElementById(`qoptions-${state.questions[qi].id}`).innerHTML = renderOptionsEditor(state.questions[qi], qi);
+}
+
+function removeOption(qi, oi) {
+  if (state.questions[qi].options.length <= 2) return;
+  state.questions[qi].options.splice(oi, 1);
+  if (state.questions[qi].answer >= state.questions[qi].options.length) state.questions[qi].answer = 0;
+  document.getElementById(`qoptions-${state.questions[qi].id}`).innerHTML = renderOptionsEditor(state.questions[qi], qi);
+}
+
+function removeQuestion(i) {
+  if (!confirm('確定要刪除此題目？')) return;
+  state.questions.splice(i, 1);
+  renderQuestionsList();
+}
+
+function moveQuestion(i, dir) {
+  const j = i + dir;
+  if (j < 0 || j >= state.questions.length) return;
+  [state.questions[i], state.questions[j]] = [state.questions[j], state.questions[i]];
+  renderQuestionsList();
+}
+
+function addQuestion() {
+  const newQ = {
+    id: Date.now(),
+    type: 'tf',
+    text: '新題目（請修改）',
+    options: ['正確', '錯誤'],
+    answer: 0,
+    explanation: ''
+  };
+  state.questions.push(newQ);
+  renderQuestionsList();
+  document.querySelector(`#qcard-${newQ.id}`)?.scrollIntoView({ behavior: 'smooth' });
+}
+
+function saveQuestions() {
+  saveState();
+  const alert = document.createElement('div');
+  alert.className = 'alert alert-success';
+  alert.textContent = '✅ 題目已儲存！';
+  document.querySelector('#tab-questions .card').insertBefore(alert, document.querySelector('#tab-questions .card').firstChild);
+  setTimeout(() => alert.remove(), 3000);
+}
+
+// === LOTTERY ===
+function updateLotteryTab() {
+  const eligible = state.participants.filter(p => p.passed && !p.won);
+  document.getElementById('lotteryPoolCount').textContent = eligible.length;
+
+  renderWinnersList();
+}
+
+function drawLottery() {
+  const eligible = state.participants.filter(p => p.passed && !p.won);
+  if (eligible.length === 0) {
+    document.getElementById('lotteryAlert').innerHTML = '<div class="alert alert-error">❌ 目前沒有符合資格的參加者</div>';
+    return;
+  }
+  document.getElementById('lotteryAlert').innerHTML = '';
+
+  const btn = document.getElementById('drawBtn');
+  btn.disabled = true;
+
+  const nameEl = document.getElementById('lotteryResultName');
+  nameEl.classList.add('spinning-text');
+
+  let count = 0;
+  const interval = setInterval(() => {
+    const rand = eligible[Math.floor(Math.random() * eligible.length)];
+    nameEl.textContent = rand.name;
+    count++;
+    if (count > 25) {
+      clearInterval(interval);
+      const winner = eligible[Math.floor(Math.random() * eligible.length)];
+      nameEl.textContent = `🏆 ${winner.name}`;
+      nameEl.classList.remove('spinning-text');
+
+      winner.won = true;
+      state.winners.push({ ...winner, drawnAt: new Date().toISOString() });
+      saveState();
+      updateLotteryTab();
+      launchConfetti();
+
+      document.getElementById('lotteryAlert').innerHTML = `<div class="alert alert-success">🎉 恭喜 ${winner.name}（${winner.lotteryCode}）獲獎！</div>`;
+      btn.disabled = false;
+    }
+  }, 80);
+}
+
+function resetLottery() {
+  if (!confirm('確定要重置抽獎（不清除資料）？所有已通過者將重新可以參加抽獎')) return;
+  state.participants.forEach(p => { if (p.passed) p.won = false; });
+  state.winners = [];
+  saveState();
+  updateLotteryTab();
+  document.getElementById('lotteryResultName').textContent = '---';
+  document.getElementById('lotteryAlert').innerHTML = '<div class="alert alert-info">🔄 已重置抽獎</div>';
+}
+
+function renderWinnersList() {
+  const el = document.getElementById('winnersListAdmin');
+  const noMsg = document.getElementById('noWinnersMsg');
+  if (state.winners.length === 0) {
+    el.innerHTML = '';
+    noMsg.style.display = 'block';
+    return;
+  }
+  noMsg.style.display = 'none';
+  el.innerHTML = state.winners.map((w, i) => `
+    <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(255,230,109,0.08);border:1px solid rgba(255,230,109,0.2);border-radius:12px;margin-bottom:8px;">
+      <span style="font-size:1.5rem;">🏆</span>
+      <div style="flex:1;">
+        <div style="font-weight:800;">${w.name}</div>
+        <div style="font-size:0.8rem;color:rgba(234,234,234,0.5);">${w.classRoom} ｜ ${w.lotteryCode}</div>
+      </div>
+      <div style="font-size:0.75rem;color:rgba(255,230,109,0.6);">第 ${i+1} 位</div>
+    </div>
+  `).join('');
+}
+
+// === DATA ===
+function loadParticipants() {
+  const tbody = document.getElementById('participantsTable');
+  if (state.participants.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:rgba(234,234,234,0.4);padding:32px;">尚無資料</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = [...state.participants].reverse().map((p, i) => {
+    const statusClass = p.won ? 'status-won' : (p.passed ? 'status-passed' : 'status-failed');
+    const statusText = p.won ? '🏆 得獎' : (p.passed ? '✅ 通過' : '❌ 未過');
+    const date = new Date(p.endTime);
+    const timeStr = `${date.getMonth()+1}/${date.getDate()} ${date.getHours()}:${String(date.getMinutes()).padStart(2,'0')}`;
+    return `
+      <tr>
+        <td>${state.participants.length - i}</td>
+        <td style="font-weight:700;">${p.name}</td>
+        <td>${p.classRoom || '-'}</td>
+        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+        <td style="font-family:monospace;letter-spacing:2px;">${p.lotteryCode || '-'}</td>
+        <td style="font-size:0.8rem;color:rgba(234,234,234,0.5);">${timeStr}</td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function exportCSV() {
+  if (state.participants.length === 0) {
+    document.getElementById('dataAlert').innerHTML = '<div class="alert alert-error">❌ 沒有資料可匯出</div>';
+    return;
+  }
+
+  const headers = ['序號', '姓名', '班級', '答對題數', '總題數', '是否通過', '抽獎序號', '是否得獎', '參加時間'];
+  const rows = state.participants.map((p, i) => [
+    i + 1, p.name, p.classRoom || '',
+    p.correct, p.total, p.passed ? '是' : '否',
+    p.lotteryCode || '', p.won ? '是' : '否',
+    new Date(p.endTime).toLocaleString('zh-TW')
+  ]);
+
+  const csvContent = '\uFEFF' + [headers, ...rows].map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `問答小學堂_${new Date().toLocaleDateString('zh-TW')}.csv`;
+  link.click();
+}
+
+// =============================================
+// CONFETTI
+// =============================================
+function launchConfetti() {
+  const container = document.getElementById('confettiContainer');
+  const colors = ['#FF6B6B', '#FFE66D', '#4ECDC4', '#A855F7', '#6BCB77', '#FF8E53'];
+  container.innerHTML = '';
+  for (let i = 0; i < 80; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const shape = Math.random() > 0.5 ? '50%' : '0';
+    piece.style.cssText = `
+      left: ${Math.random() * 100}%;
+      width: ${6 + Math.random() * 8}px;
+      height: ${6 + Math.random() * 8}px;
+      background: ${color};
+      border-radius: ${shape};
+      animation-duration: ${1.5 + Math.random() * 2}s;
+      animation-delay: ${Math.random() * 0.5}s;
+    `;
+    container.appendChild(piece);
+  }
+  setTimeout(() => container.innerHTML = '', 4000);
+}
+
+// =============================================
+// INIT
+// =============================================
+loadState();
+updateHomeScreen();
+
+// Enter key on prize input
+document.getElementById('prizeInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addQuestion();
+});
+</script>
+</body>
+</html>
